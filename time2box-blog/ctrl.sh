@@ -11,7 +11,7 @@ case "$1" in
     PID=`sed -n 1p pidfile`  #get pid from file
     if [ ! -z "$PID" ] ; then
 #        ./crntb-adm.sh uninstall
-        echo "Stopping neuron-tornado-blog service, begin killing ${PID}"
+        echo "Stopping neuron-time2box-blog service, begin killing ${PID}"
         kill ${PID} >/dev/null 2>&1
         sleep 2
         echo "Stop: "`date` >> ./log/ctrl.log
@@ -20,10 +20,10 @@ case "$1" in
     # second Starting the Service   
     cmd=`ps -e|grep $PID`    #get process with the given pid   
     if [ "$PID" != "" ] ; then
-        echo "Starting neuron-tornado-blog service..."  
+        echo "Starting neuron-time2box-blog service..."
         nohup python main.py &
         echo $! > pidfile    #record process id to file
-        echo 'Startup neuron-tornado-blog service success!'
+        echo 'Startup neuron-time2box-blog service success!'
 #        ./crntb-adm.sh install
         echo "Start: "`date` >> ./log/ctrl.log
     fi
@@ -34,7 +34,7 @@ case "$1" in
     PID=`sed -n 1p pidfile`  #get pid from pidfile
     if [ ! -z "$PID" ] ; then
 #        ./crntb-adm.sh uninstall
-        echo "Stopping neuron-tornado-blog service, begin killing ${PID}"
+        echo "Stopping neuron-time2box-blog service, begin killing ${PID}"
         kill ${PID} >/dev/null 2>&1
         echo "Stop: "`date` >> ./log/ctrl.log
     fi
