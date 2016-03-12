@@ -32,7 +32,7 @@
 			{% raw xsrf_form_html() %}
 
 			<input id="articleId" name="articleId" value="{{articleId}}" type="hidden" />
-			<input id="paragraphId" name="paragraphId" value="{{paragraph["id"]}}" type="hidden" />
+			<input id="paragraphId" name="paragraphId" value="{{paragraph['id']}}" type="hidden" />
 
 			<div class="form-group required">
 
@@ -55,12 +55,14 @@
 	<div id="alerts"></div>
     <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
       <div class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font"><i class="icon-font"></i><b class="caret"></b></a>
+        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font">
+        	<i class="icon-font"></i><b class="caret"></b></a>
           <ul class="dropdown-menu">
           </ul>
         </div>
       <div class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font Size"><i class="icon-text-height"></i>&nbsp;<b class="caret"></b></a>
+        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font Size">
+        	<i class="icon-text-height"></i>&nbsp;<b class="caret"></b></a>
           <ul class="dropdown-menu">
           <li><a data-edit="fontSize 5"><font size="5">Huge</font></a></li>
           <li><a data-edit="fontSize 3"><font size="3">Normal</font></a></li>
