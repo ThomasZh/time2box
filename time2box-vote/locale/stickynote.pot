@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-11 09:00+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: account.py:71
+msgid "Please enter a correct username and password."
+msgstr ""
+
+#: account.py:127
+msgid "Email already exist, please try another."
+msgstr ""
+
+#: account.py:150
+msgid "Email has been send to your mail, please check it."
+msgstr ""
+
+#: templates/404.html:7
+msgid "ERROR"
+msgstr ""
+
+#: templates/404.html:49
+msgid "NOT FOUND"
+msgstr ""
+
+#: templates/404.html:59
+msgid "Sorry, the page you were looking for does not exist."
+msgstr ""
+
+#: templates/404.html:61
+msgid "BACK TO HOME"
+msgstr ""
+
+#: templates/404.html:64
+msgid "If you followed a broken link"
+msgstr ""
+
+#: templates/404.html:64
+msgid "please"
+msgstr ""
+
+#: templates/404.html:65
+msgid "let us know"
+msgstr ""
+
+#: templates/404.html:66
+msgid "where the broken link came from."
+msgstr ""
+
+#: templates/account/forgot-pwd.html:7 templates/account/login.html:103
+msgid "Forgot password"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:55
+msgid "Resend your activation email"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:61 templates/account/login.html:7
+#: templates/account/login.html:56 templates/account/register.html:61
+#: templates/account/reset-pwd.html:61
+msgid "Sign in"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:71
+msgid "If you have fixed your email settings and require the email to be resent, please put in your email address below"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:73 templates/account/forgot-pwd.html:76
+#: templates/account/login.html:81 templates/account/login.html:84
+#: templates/account/register.html:80 templates/account/register.html:82
+msgid "Email address"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:80 templates/account/login.html:100
+#: templates/account/register.html:96 templates/account/reset-pwd.html:84
+#: templates/stickynote/add-board.html:79 templates/stickynote/add-note.html:93
+#: templates/stickynote/edit-board.html:79
+#: templates/stickynote/edit-note.html:104
+msgid "Submit"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:83
+msgid "Troubleshooting"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:84
+msgid "If you have trouble receiving your Inbox Signup Validation, try the following"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:86
+msgid "Wrong Address"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:87
+msgid "Make sure that you have typed in the correct email address (displayed above)."
+msgstr ""
+
+#: templates/account/forgot-pwd.html:89
+msgid "Junk Mail Filter"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:90
+msgid "Make sure that the Signup Validation Email did not get filtered into the junk mail folder of your email application."
+msgstr ""
+
+#: templates/account/forgot-pwd.html:92
+msgid "Blocked by ISP"
+msgstr ""
+
+#: templates/account/forgot-pwd.html:93
+msgid "In some cases emails may be accidentally blocked by Anti-SPAM technology used by your Internet Service Provider (ISP)."
+msgstr ""
+
+#: templates/account/forgot-pwd.html:94
+msgid "Contact your ISP and ask them if they are blocking email sent by SendCloud.com."
+msgstr ""
+
+#: templates/account/forgot-pwd.html:98
+msgid "If you have trouble validating your account and have recieved your email please contact us for assistance:"
+msgstr ""
+
+#: templates/account/login.html:62 templates/account/register.html:7
+#: templates/account/register.html:55
+msgid "Sign up"
+msgstr ""
+
+#: templates/account/login.html:87 templates/account/login.html:89
+#: templates/account/register.html:85 templates/account/register.html:87
+#: templates/account/reset-pwd.html:73 templates/account/reset-pwd.html:75
+msgid "Password"
+msgstr ""
+
+#: templates/account/login.html:93 templates/account/login.html:95
+msgid "Remember me"
+msgstr ""
+
+#: templates/account/register.html:90 templates/account/register.html:92
+#: templates/account/reset-pwd.html:78 templates/account/reset-pwd.html:80
+msgid "Password again"
+msgstr ""
+
+#: templates/account/reset-pwd.html:7 templates/account/reset-pwd.html:55
+msgid "Reset_password"
+msgstr ""
+
+#: templates/stickynote/add-board.html:8 templates/stickynote/add-note.html:8
+msgid "Add"
+msgstr ""
+
+#: templates/stickynote/add-board.html:60 templates/stickynote/boards.html:8
+#: templates/stickynote/stickynotes.html:41
+msgid "Home"
+msgstr ""
+
+#: templates/stickynote/add-board.html:75 templates/stickynote/add-note.html:76
+#: templates/stickynote/edit-board.html:75
+#: templates/stickynote/edit-note.html:79
+msgid "Please input title..."
+msgstr ""
+
+#: templates/stickynote/add-note.html:60
+#: templates/stickynote/edit-board.html:58
+#: templates/stickynote/edit-note.html:60
+#: templates/stickynote/stickynotes.html:7
+msgid "Green Board"
+msgstr ""
+
+#: templates/stickynote/boards.html:42
+msgid "Welcome"
+msgstr ""
+
+#: templates/stickynote/boards.html:48
+msgid "Logout"
+msgstr ""
+
+#: templates/stickynote/edit-board.html:8 templates/stickynote/edit-note.html:8
+#: templates/stickynote/stickynotes.html:48
+msgid "Edit"
+msgstr ""
+
+#: templates/stickynote/edit-board.html:83
+#: templates/stickynote/edit-note.html:108
+msgid "Delete"
+msgstr ""
+
+#: templates/stickynote/edit-note.html:83
+#: templates/stickynote/edit-note.html:85
+msgid "Completed"
+msgstr ""
