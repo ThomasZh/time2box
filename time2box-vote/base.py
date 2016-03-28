@@ -19,6 +19,8 @@ import time
 
 import tornado.web
 
+STP = "123.56.228.41"
+
 
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):

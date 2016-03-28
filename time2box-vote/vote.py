@@ -19,12 +19,12 @@ import json
 import logging
 import time
 
-from tornado.escape import json_decode
+from tornado.escape import json_decode, json_encode
 from tornado.httpclient import HTTPClient
 from tornado.httputil import url_concat
 import tornado.web
 
-from base import BaseHandler, timestamp_datetime, datetime_timestamp
+from base import BaseHandler, timestamp_datetime, datetime_timestamp, STP
 
 
 class VoteIndexHandler(tornado.web.RequestHandler):
@@ -32,7 +32,37 @@ class VoteIndexHandler(tornado.web.RequestHandler):
         _vote_id = (self.request.arguments['id'])[0]
         logging.info("_vote_id: ", _vote_id)
         
-        self.render('vote/index.html')
+        url = "http://"+STP+"/votes/" + _vote_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _vote = json_decode(response.body)
+        
+        self.render('vote/index.html', vote=_vote)
+
+    def post(self):
+        _ticket = self.get_secure_cookie("ticket")
+        _id = (self.request.arguments['id'])[0]
+        logging.info("id: ", _id)
+        print _id
+        _idx = (self.request.arguments['idx'])[0]
+        print _idx
+        logging.info("_idx: ", _idx)
+        
+        params = {"X-Session-Id": _ticket}
+        url = url_concat("http://"+STP+"/votes/"+_id+"/"+_idx, params)
+        http_client = HTTPClient()
+        _json = json_encode(params)
+        response = http_client.fetch(url, method="PUT", body=_json)
+        logging.info("got response %r", response.body)
+        
+        url = "http://"+STP+"/votes/" + _id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _vote = json_decode(response.body)
+        
+        self.render('vote/result.html', vote=_vote)
 
 
 class VoteResultHandler(tornado.web.RequestHandler):
@@ -48,15 +78,58 @@ class VoteAdminIndexHandler(BaseHandler):
     def get(self):
         self.render('vote/admin_index.html')
 
+    
+def toJson(title, subTitle, imgUrl, items):
+    _str2 = '['
+    i = 0;
+    l = len(items)
+    for _item in items:
+        _str2 = _str2 + '{"item":"'+_item+'","num":0,"idx":'+str(i)+'}'
+        i = i + 1
+        if i < l:
+            _str2 = _str2 + ','
+    _str2 = _str2 + ']'
+    _str = '{"title":"'+title+'","subTitle":"'+subTitle+'","imgUrl":"'+imgUrl+'","items":'+_str2+'}'
+    return _str
 
+    
 class VoteAdminAddHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
         self.render('vote/admin_add.html')
         
     @tornado.web.authenticated  # if no session, redirect to login page
-    def post(self):            
-        self.render('vote/admin_index.html')
+    def post(self):
+        _ticket = self.get_secure_cookie("ticket")
+        _title = (self.request.arguments['title'])[0]
+        _sub_title = (self.request.arguments['subTitle'])[0]
+        _img_url = (self.request.arguments['imgUrl'])[0]
+        _items = self.request.arguments['item']
+        logging.info("_title: ", _title)
+        logging.info("_sub_title: ", _sub_title)
+        logging.info("_img_url: ", _img_url)
+        logging.info("_items: ", _items)
+        print _title
+        print _sub_title
+        print _img_url
+        print _items
+        
+        params = {"X-Session-Id": _ticket}
+        url = url_concat("http://"+STP+"/votes", params)
+        http_client = HTTPClient()
+        _json = toJson(_title, _sub_title, _img_url, _items)
+        print _json
+        response = http_client.fetch(url, method="POST", body=_json)
+        logging.info("got response %r", response.body)
+        _vote_id = json_decode(response.body)
+        
+        url = "http://"+STP+"/votes/" + _vote_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _vote = json_decode(response.body)
+        
+        self.render('vote/index.html', vote=_vote)
 
 
 class VoteAdminAjaxHandler(BaseHandler):
