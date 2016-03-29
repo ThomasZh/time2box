@@ -4,16 +4,21 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
+<meta name="description" content="{{vote['subTitle']}}">
 <meta name="author" content="">
 
-<title>投票</title>
+<title>投票 - {{vote['title']}}</title>
 
 <!-- Bootstrap Core CSS -->
 <link rel="stylesheet"
 	href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <!-- Custom CSS -->
 <link href="/static/css/clean-blog.min.css" rel="stylesheet">
+
+<!-- 微信转发的链接中的缩略图 -->
+<div id='wx_pic' style='margin:0 auto;display:none;'>
+	<img src="{{vote['imgUrl']}}" />
+</div>
 </head>
 
 <body>
@@ -45,7 +50,7 @@
 					<!-- Pager -->
 					<ul class="pager">
 						<li class="next">
-							<button type="submit" class="btn btn-default">投票</button>
+							<button type="submit" class="btn btn-default">投票 &rarr;</button>
 						</li>
 					</ul>
 				</div>
