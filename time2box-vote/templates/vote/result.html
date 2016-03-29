@@ -20,36 +20,35 @@
 
 	<!-- Main Content -->
 	<div class="container">
-	<form action="" method="get">
-		<div class="row">
-			<div id="articleRows" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-				<div class="post-preview">
-					<h2 class="post-title">{{vote['title']}}</h2>
-					<img class="img-responsive" src="{{vote['imgUrl']}}">
-					<h3 class="post-subtitle">{{vote['subTitle']}}</h3>
-					<ul>
-					{% for item in vote['items'] %}
-						<li>{{item['item']}} ({{item['num']}}票)</li> 
-					{% end %}
+		<form action="" method="get">
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<div class="post-preview">
+						<h2 class="post-title">{{vote['title']}}</h2>
+						<img class="img-responsive" src="{{vote['imgUrl']}}">
+						<h3 class="post-subtitle">{{vote['subTitle']}}</h3>
+						<ul>
+							{% for item in vote['items'] %}
+							<li>{{item['item']}} ({{item['num']}}票)</li> 
+							{% end %}
+						</ul>
+					</div>
+					<hr />
+				</div>
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<!-- Pager -->
+					<ul class="pager">
+						<li class="next"><a href="/vote/admin/add">创建投票，发送到朋友圈，玩一玩 &rarr;</a></li>
 					</ul>
-                </div>
-                <hr/>
+				</div>
 			</div>
-			<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-				<!-- Pager -->
-				<ul class="pager">
-					<li class="next"><a href="/vote/admin/add">Create New Post &rarr;</a></li>
-				</ul>
-			</div>
-		</div>
-	</form>
+		</form>
 	</div>
-  
+
 	<!-- jQuery -->
 	<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
-
 	<!-- Bootstrap Core JavaScript -->
 	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	
+
 </body>
 </html>

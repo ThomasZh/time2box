@@ -21,22 +21,27 @@
 	<!-- Main Content -->
 	<div class="container">
 		<form action="/vote/index" method="post">
-		{% raw xsrf_form_html() %}
-		
-			<input name="id" type="hidden" value="{{vote['id']}}" />
+			{% raw xsrf_form_html() %} <input name="id" type="hidden"
+				value="{{vote['id']}}" />
 			<div class="row">
-				<div id="articleRows" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 					<div class="post-preview">
 						<h2 class="post-title">{{vote['title']}}</h2>
 						<img class="img-responsive" src="{{vote['imgUrl']}}">
 						<h3 class="post-subtitle">{{vote['subTitle']}}</h3>
-						{% for item in vote['items'] %} 
-						<p><input name="idx" type="radio" value="{{item['idx']}}" />{{item['item']}}</p>
+						{% for item in vote['items'] %}
+						<p>
+							{% if item['idx'] == 0 %}
+							<input name="idx" type="radio" value="{{item['idx']}}"  checked /> {{item['item']}}
+							{% else %}
+							<input name="idx" type="radio" value="{{item['idx']}}" /> {{item['item']}}
+							{% end %}
+						</p>
 						{% end %}
-                	</div>
-                	<hr/>
 					</div>
-					<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<hr />
+				</div>
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 					<!-- Pager -->
 					<ul class="pager">
 						<li class="next"><button type="submit" class="btn btn-default">投票</button></li>
