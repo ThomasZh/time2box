@@ -19,6 +19,71 @@
 <div id='wx_pic' style='margin:0 auto;display:none;'>
 	<img src="{{vote['imgUrl']}}" />
 </div>
+
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script>
+	var _id = document.getElementById("id").value;
+	var _title = document.getElementById("title").value;
+	var _imgUrl = document.getElementById("imgUrl").value;
+	var _subTitle = document.getElementById("subTitle").value;
+	var _appid = 'wxaa328c83d3132bfb';
+
+	function shareFriend() {
+		WeixinJSBridge.invoke('sendAppMessage', {
+			"appid" : _appid,
+			"img_url" : _imgUrl,
+			"img_width" : "640",
+			"img_height" : "640",
+			"link" : "http://vote.time2box.com/?id="+_id,
+			"desc" : _subTitle,
+			"title" : _title
+		}, function(res) {
+			_report('send_msg', res.err_msg);
+		})
+	}
+
+	function shareTimeline() {
+		WeixinJSBridge.invoke('shareTimeline', {
+			"img_url" : _imgUrl,
+			"img_width" : "640",
+			"img_height" : "640",
+			"link" : "http://vote.time2box.com/?id="+_id,
+			"desc" : _subTitle,
+			"title" : _title
+		}, function(res) {
+			_report('timeline', res.err_msg);
+		});
+	}
+
+	function shareWeibo() {
+		WeixinJSBridge.invoke('shareWeibo', {
+			"content" : _subTitle,
+			"url" : lineLink,
+		}, function(res) {
+			_report('weibo', res.err_msg);
+		});
+	}
+
+	// 当微信内置浏览器完成内部初始化后会触发WeixinJSBridgeReady事件。
+	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+
+		// 发送给好友
+		WeixinJSBridge.on('menu:share:appmessage', function(argv) {
+			shareFriend();
+		});
+
+		// 分享到朋友圈
+		WeixinJSBridge.on('menu:share:timeline', function(argv) {
+			shareTimeline();
+		});
+
+		// 分享到微博
+		WeixinJSBridge.on('menu:share:weibo', function(argv) {
+			shareWeibo();
+		});
+	}, false);
+</script>
+
 </head>
 
 <body>
@@ -66,7 +131,7 @@
 	<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<!-- Bootstrap Core JavaScript -->
 	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	
 	<script type="text/javascript" language="javascript">
 		_id = document.getElementById("id").value;
 		_title = document.getElementById("title").value;
