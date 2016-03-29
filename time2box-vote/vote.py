@@ -41,7 +41,6 @@ class VoteIndexHandler(tornado.web.RequestHandler):
         self.render('vote/index.html', vote=_vote)
 
     def post(self):
-        _ticket = self.get_secure_cookie("ticket")
         _id = (self.request.arguments['id'])[0]
         logging.info("id: ", _id)
         print _id
@@ -49,13 +48,21 @@ class VoteIndexHandler(tornado.web.RequestHandler):
         print _idx
         logging.info("_idx: ", _idx)
         
-        params = {"X-Session-Id": _ticket}
-        url = url_concat("http://"+STP+"/votes/"+_id+"/"+_idx, params)
+        params = {"id": _id, "idx": _idx}
+        url = "http://"+STP+"/votes/"+_id+"/"+_idx
         http_client = HTTPClient()
         _json = json_encode(params)
         response = http_client.fetch(url, method="PUT", body=_json)
         logging.info("got response %r", response.body)
         
+        self.redirect("/vote/result?id="+_id)
+
+
+class VoteResultHandler(tornado.web.RequestHandler):
+    def get(self):
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
+
         url = "http://"+STP+"/votes/" + _id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
@@ -63,14 +70,6 @@ class VoteIndexHandler(tornado.web.RequestHandler):
         _vote = json_decode(response.body)
         
         self.render('vote/result.html', vote=_vote)
-
-
-class VoteResultHandler(tornado.web.RequestHandler):
-    def get(self):
-        _vote_id = (self.request.arguments['id'])[0]
-        logging.info("_vote_id: ", _vote_id)
-
-        self.render('vote/result.html')
 
 
 class VoteAdminIndexHandler(BaseHandler):
