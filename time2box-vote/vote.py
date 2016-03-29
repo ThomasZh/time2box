@@ -24,7 +24,9 @@ from tornado.httpclient import HTTPClient
 from tornado.httputil import url_concat
 import tornado.web
 
+from account import ssoLogin
 from base import BaseHandler, timestamp_datetime, datetime_timestamp, STP
+from wechat import getAccessToken, APP_ID, APP_SECRET, getUserInfo
 
 
 class VoteIndexHandler(tornado.web.RequestHandler):
@@ -95,6 +97,34 @@ def toJson(title, subTitle, imgUrl, items):
 class VoteAdminAddHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
+        _code = self.get_argument("code", "")
+        logging.debug("got code %r", _code)
+        _unionid = self.get_argument("unionid", "")
+        logging.debug("got unionid %r", _unionid)
+        
+        accessToken = getAccessToken(APP_ID, APP_SECRET, _code);
+        _token = accessToken["access_token"];
+        logging.debug("got token %r", _token)
+        _openid = accessToken["openid"];
+        logging.debug("got openid %r", _openid)
+        _unionid = accessToken["unionid"];
+        logging.debug("got unionid %r", _unionid)
+        
+        userInfo = getUserInfo(_token, _openid)
+        _nickname = userInfo["nickname"]
+        _nickname = unicode(_nickname).encode('utf-8')
+        logging.debug("got nickname %r", _nickname)
+        _headimgurl = userInfo["headimgurl"]
+        logging.debug("got headimgurl %r", _headimgurl)
+        
+        _user_agent = self.request.headers["User-Agent"]
+        _lang = self.request.headers["Accept-Language"]
+        # 1604=wechat
+        stpSession = ssoLogin(1604, _unionid, _nickname, _headimgurl, _user_agent, _lang)
+        _accountId = stpSession["accountId"]
+        _sessionTicket = stpSession["sessionToken"]
+        self.set_secure_cookie("ticket", _sessionTicket)
+        
         self.render('vote/admin_add.html')
         
     @tornado.web.authenticated  # if no session, redirect to login page

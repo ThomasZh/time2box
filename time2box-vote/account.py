@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2015 Time2Box
+# Copyright 2015 planc2c.com
 # thomas@time2box.com
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,12 +17,13 @@
 
 import base64
 from gettext import gettext as _
+import logging
 import uuid
 
 from tornado.escape import json_encode, json_decode
 from tornado.httpclient import HTTPClient
 
-from base import BaseHandler
+from base import BaseHandler, STP
 
 
 class LoginHandler(BaseHandler):
@@ -56,7 +57,7 @@ class LoginHandler(BaseHandler):
                   "password" : _md5pwd,
                   "email" : _login_name}
             _json = json_encode(params)
-            url = "http://182.92.66.109/account/login"
+            url = "http://"+STP+"/account/login"
             http_client = HTTPClient()
             response = http_client.fetch(url, method="POST", body=_json)
             print response.body
@@ -113,7 +114,7 @@ class RegisterHandler(BaseHandler):
                   "email" : _email,
                   "lang": _lang,}
             _json = json_encode(params)
-            url = "http://182.92.66.109/account/email-register"
+            url = "http://"+STP+"/account/email-register"
             http_client = HTTPClient()
             response = http_client.fetch(url, method="POST", body=_json)
             print response.body
@@ -142,7 +143,7 @@ class ForgotPwdHandler(BaseHandler):
         
         params = {"email" : _email}
         _json = json_encode(params)
-        url = "http://182.92.66.109/account/apply-for-email-verification"
+        url = "http://"+STP+"/account/apply-for-email-verification"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         print response.body
@@ -165,7 +166,7 @@ class ResetPwdHandler(BaseHandler):
         
         params = {"ekey" : _ekey}
         _json = json_encode(params)
-        url = "http://182.92.66.109/account/verify-email"
+        url = "http://"+STP+"/account/verify-email"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         print response.body
@@ -174,11 +175,23 @@ class ResetPwdHandler(BaseHandler):
 
         params = {"ekey" : _ekey, "email": _email, "newPassword": _md5pwd}
         _json = json_encode(params)
-        url = "http://182.92.66.109/account/reset-password"
+        url = "http://"+STP+"/account/reset-password"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         print response.body
         
         _err_msg = _("Password has been changed, please sign in.")
         self.render('account/login.html', err_msg=_err_msg, 
-                    login_name="", remember_me="off")   
+                    login_name="", remember_me="off")
+
+
+def ssoLogin(loginType, loginName, nickname, avatarUrl, userAgent, lang):
+    _device_id = base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)
+    params = {"gateToken" : "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=", "deviceId": _device_id, "osVersion" : "webkit:"+userAgent, "loginType": loginType, "loginName": loginName, "nickname": nickname, "imageUrl" : avatarUrl, "lang" : lang}
+    _json = json_encode(params)
+    url = "http://"+STP+"/account/ssologin"
+    http_client = HTTPClient()
+    response = http_client.fetch(url, method="POST", body=_json)
+    logging.info("got response %r", response.body)
+    stpSession = json_decode(response.body)
+    return stpSession
