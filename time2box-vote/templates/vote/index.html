@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="疯狂动物城">
+<meta name="description" content="{{vote['subTitle']}}">
 <meta name="author" content="">
 
 <title>投票 - {{vote['title']}}</title>
@@ -15,7 +15,7 @@
 <!-- Custom CSS -->
 <link href="/static/css/clean-blog.min.css" rel="stylesheet">
 
-<!-- 微信转发的链接中的缩略图 -->
+<!-- 微信转发的链接中的图片 -->
 <div id='wx_pic' style='margin:0 auto;display:none;'>
 	<img src="{{vote['imgUrl']}}" />
 </div>
@@ -26,8 +26,12 @@
 	<!-- Main Content -->
 	<div class="container">
 		<form action="/vote/index" method="post">
-			{% raw xsrf_form_html() %} <input name="id" type="hidden"
-				value="{{vote['id']}}" />
+			{% raw xsrf_form_html() %} 
+			
+			<input name="id" type="hidden" value="{{vote['id']}}" />
+			<input name="title" type="hidden" value="{{vote['title']}}" />
+			<input name="subTitle" type="hidden" value="{{vote['subTitle']}}" />
+			<input name="imgUrl" type="hidden" value="{{vote['imgUrl']}}" />
 			<div class="row">
 				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 					<div class="post-preview">
@@ -62,6 +66,34 @@
 	<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 	<!-- Bootstrap Core JavaScript -->
 	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	<script type="text/javascript" language="javascript">
+		_id = document.getElementById("id").value;
+		_title = document.getElementById("title").value;
+		_imgUrl = document.getElementById("imgUrl").value;
+		_subTitle = document.getElementById("subTitle").value;
+			
+		wx.ready(function() {
+			// 获取“分享到朋友圈”按钮点击状态及自定义分享内容接口
+			wx.onMenuShareTimeline({
+				title : _title, // 分享标题
+				link : "http://vote.time2box.com/?id="+_id,
+				imgUrl : _imgUrl, // 分享图标
+				success : function(res) {
+				}
+			});
 
+			// 获取“分享给朋友”按钮点击状态及自定义分享内容接口
+			wx.onMenuShareAppMessage({
+				title : _title, // 分享标题
+				link : "http://vote.time2box.com/?id="+_id,
+				imgUrl : _imgUrl, // 分享图标
+				desc : _subTitle, // 分享描述
+				type : 'link', // 分享类型,music、video或link，不填默认为link
+				success : function(res) {
+				}
+			});
+		});
+	</script>
 </body>
 </html>
