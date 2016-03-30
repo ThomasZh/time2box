@@ -16,6 +16,7 @@
 # under the License.
 
 import logging
+import time
 
 from tornado.escape import json_decode, json_encode
 from tornado.httpclient import HTTPClient
@@ -25,28 +26,33 @@ import tornado.web
 from base import BaseHandler, STP
 
 
-def toJson(title, subTitle, imgUrl, texts, imgUrls):
-    _str2 = '['
-    i = 0;
-    l = len(texts)
-    for _text in texts:
-        _str2 = _str2 + '{"text":"'+_text+'","imgUrl":"'+imgUrls[i]+'","num":0,"idx":'+str(i)+'}'
-        i = i + 1
-        if i < l:
-            _str2 = _str2 + ','
-    _str2 = _str2 + ']'
-    _str = '{"title":"'+title+'","subTitle":"'+subTitle+'","imgUrl":"'+imgUrl+'","items":'+_str2+'}'
-    return _str
-
-
 class VoteIndexHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render('vote/posts_index.html')
+        _timestamp = long(time.time() * 1000)
+        params = {"before":_timestamp, "limit":20}
+        url = url_concat("http://"+STP+"/votes", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _votes = json_decode(response.body)
+        
+        self.render('vote/posts_index.html', votes=_votes)
 
 
-class VoteMineHandler(tornado.web.RequestHandler):
+class VoteMineHandler(BaseHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
-        self.render('vote/posts_mine.html')
+        _ticket = self.get_secure_cookie("ticket")
+        
+        _timestamp = long(time.time() * 1000)
+        params = {"X-Session-Id": _ticket, "before":_timestamp, "limit":20}
+        url = url_concat("http://"+STP+"/votes/mine", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _votes = json_decode(response.body)
+        
+        self.render('vote/posts_mine.html', votes=_votes)
 
 
 class VoteInfoHandler(tornado.web.RequestHandler):

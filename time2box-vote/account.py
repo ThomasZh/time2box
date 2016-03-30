@@ -67,7 +67,7 @@ class LoginHandler(BaseHandler):
             self.set_secure_cookie("ticket", _session_ticket)
             self.set_secure_cookie("login_name", _login_name)
             self.set_secure_cookie("remember_me", _remember_me)
-            self.redirect("/")
+            self.redirect("/vote/post/mine")
         except Exception:  
             _err_msg = _("Please enter a correct username and password.")
             self.render('account/login.html', err_msg=_err_msg, 

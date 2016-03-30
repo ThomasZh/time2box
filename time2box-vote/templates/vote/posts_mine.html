@@ -7,7 +7,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>Time&sup2;box - Blog</title>
+<title>我</title>
 
 <!-- Bootstrap Core CSS -->
 <link rel="stylesheet"
@@ -89,33 +89,26 @@
 	<div class="container">
 	<form action="" method="get">
 		<div class="row">
+			<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+				<!-- Pager -->
+				<ul class="pager">
+					<li class="previous">
+						<a href="/vote/admin/add" class="defbtn">添加投票</a>
+					</li>
+				</ul>
+			</div>
 			<div id="articleRows" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-				<div class="post-preview">
-					<h2 class="post-title">水果大作战投票测试</h2>
-					<img class="img-responsive" src="/static/img/fruit.jpeg">
-					<h3 class="post-subtitle">您最喜欢水果？</h3>
-					<ul>
-						<li>苹果 8票</li>
-						<li>桃子 6票</li>
-						<li>香蕉 3票</li>
-						<li>梨 2票</li>
-						<li>其它 0票</li>
-					</ul>
-                </div>
-                <hr/>
-                <div class="post-preview">
-					<h2 class="post-title">水果大作战投票测试</h2>
-					<img class="img-responsive" src="/static/img/fruit.jpeg">
-					<h3 class="post-subtitle">您最喜欢水果？</h3>
-					<ul>
-						<li>苹果 8票</li>
-						<li>桃子 6票</li>
-						<li>香蕉 3票</li>
-						<li>梨 2票</li>
-						<li>其它 0票</li>
-					</ul>
-                </div>
-                <hr/>
+				<hr/>
+				{% for vote in votes %}
+					<div class="post-preview">
+						<a href="/vote/admin/items?id={{vote['id']}}">
+							<h2 class="post-title">{{vote["title"]}}</h2>
+							<img class="img-responsive" src="{{vote['imgUrl']}}">
+							<h3 class="post-subtitle">{{vote["subTitle"]}}</h3>
+						</a>
+                	</div>
+                	<hr/>
+				{% end %}
 			</div>
 			<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 				<!-- Pager -->
