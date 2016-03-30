@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>添加选项</title>
+
+<!-- Bootstrap Core CSS -->
+<link rel="stylesheet"
+	href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Custom CSS -->
+<link href="/static/css/clean-blog.min.css" rel="stylesheet">
+<!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/fileinput.min.css">
+
+</head>
+
+<body>
+
+	<!-- Main Content -->
+	<div class="container">
+		<form id="form1" action="/vote/admin/item" method="POST">
+			{% raw xsrf_form_html() %}
+
+			<input type="hidden" name="id" value="{{id}}">
+			<div class="row">
+				<div id="articleRows" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+				
+					<div class="row control-group">
+						<p class="help-block text-danger">请选择图片</p>
+						<div class="form-group required">
+							<label for="file" class="sr-only">{{_("Please choose file...")}}</label>
+							<input id="file" type="file" class="file" data-preview-file-type="any">
+							<input id="imgUrl" name="imgUrl" type="hidden" />
+						</div>
+					</div>
+					<div class="row control-group">
+						<div
+							class="form-group col-xs-12 floating-label-form-group controls">
+							<label>Message</label>
+							<textarea rows="5" class="form-control" placeholder="添加选项"
+								id="message" name="text" required
+								data-validation-required-message="Please enter sub title."></textarea>
+							<p class="help-block text-danger"></p>
+						</div>
+					</div>
+					<div id="success-block"></div>
+					<div class="row">
+						<div class="form-group col-xs-12">
+							<button id="SubmitButton" type="button" class="btn btn-default">提交 &rarr;</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	
+	<script src="/static/js/fileinput.min.js"></script>
+	<script src="/static/js/fileinput_locale_zh.js"></script>
+	<script src="/static/js/spark-md5.min.js"></script>
+	<script src="/static/js/async.js"></script>
+	<script src="/static/js/upyun-mu.js"></script>
+
+	<script type="text/javascript">
+		// with plugin options
+		$("#file").fileinput({
+			'showCaption': false, 
+			'showUpload': false,
+		});
+		
+		function uuid() {
+			var s = [];
+			var hexDigits = "0123456789abcdef";
+			for (var i = 0; i < 36; i++) {
+				s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+			}
+			s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
+			s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+			s[8] = s[13] = s[18] = s[23] = "-";
+
+			var uuid = s.join("");
+			return uuid;
+		}
+		
+		function uploadUpyun(file) {
+			var ext = '.' + file.name.split('.').pop();
+			
+			var config = {
+				// 空间名称
+				bucket : 'bighorn',
+				// 上传请求过期时间
+				expiration : parseInt((new Date().getTime() + 3600000) / 1000),
+				// 尽量不要使用直接传表单 API 的方式，以防泄露造成安全隐患
+				form_api_secret : 'minNcL/cabhEznMeFpYhEQFsH+k='
+			};
+
+			var instance = new Sand(config);
+			var options = {
+				'notify_url' : 'http://upyun.com'
+			};
+			instance.setOptions(options);
+
+			var d = new Date();
+			var month = d.getMonth() + 1;
+			var filename = '/image/test/' + d.getFullYear() + '/' + month + '/' + d.getDate() + '/' + uuid() + ext;
+			instance.upload(filename);
+		
+			return 'http://bighorn.b0.upaiyun.com' + filename;
+		}
+		
+		$('#SubmitButton').click(function() {
+			var file = document.getElementById('file').files[0];
+			var imgUrl = uploadUpyun(file);
+			document.getElementById("imgUrl").value = imgUrl;
+		});
+
+		document.addEventListener('uploaded',function(e) {
+			var block = document.getElementById('success-block');
+
+			var elem = document.createElement("ul");
+			elem.innerHTML += '<div class="alert alert-success" role="alert">Well done! You successfully upload this file.</div>';
+			block.appendChild(elem);
+
+			setTimeout(function() {
+				elem.remove();
+			}, 5000);
+
+			document.getElementById("form1").submit();
+		});
+	</script>
+</body>
+</html>

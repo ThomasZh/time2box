@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="{{vote['subTitle']}}">
+<meta name="author" content="">
+
+<title>投票 - {{vote['title']}}</title>
+
+<!-- Bootstrap Core CSS -->
+<link rel="stylesheet"
+	href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<!-- Custom CSS -->
+<link href="/static/css/clean-blog.min.css" rel="stylesheet">
+
+<!-- 微信转发的链接中的图片 -->
+<div id='wx_pic' style='margin:0 auto;display:none;'>
+	<img src="{{vote['imgUrl']}}" />
+</div>
+</head>
+
+<body>
+
+	<!-- Main Content -->
+	<div class="container">
+		<form action="/vote/info" method="post">
+			{% raw xsrf_form_html() %} 
+			
+			<input name="id" type="hidden" value="{{vote['id']}}" />
+			<input name="title" type="hidden" value="{{vote['title']}}" />
+			<input name="subTitle" type="hidden" value="{{vote['subTitle']}}" />
+			<input name="imgUrl" type="hidden" value="{{vote['imgUrl']}}" />
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<div class="post-preview">
+						<h2 class="post-title">{{vote['title']}}</h2>
+						<img class="img-responsive" src="{{vote['imgUrl']}}">
+						<h3 class="post-subtitle">{{vote['subTitle']}}</h3>
+						{% for item in vote['items'] %}
+						<p>
+							{% if item['idx'] == 0 %}
+								<input name="idx" type="radio" value="{{item['idx']}}"  checked />
+								{% if item['imgUrl'] %}
+									<img src="{{item['imgUrl']}}" width="60" height="60" class="img-circle"> 
+								{% end %}
+								{{item['text']}}
+							{% else %}
+								<input name="idx" type="radio" value="{{item['idx']}}" />
+								{% if item['imgUrl'] %}
+									<img src="{{item['imgUrl']}}" width="60" height="60" class="img-circle"> 
+								{% end %}
+								{{item['text']}}
+							{% end %}
+						</p>
+						{% end %}
+					</div>
+					<hr />
+				</div>
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<!-- Pager -->
+					<ul class="pager">
+						<li class="next">
+							<button type="submit" class="btn btn-default">投票 &rarr;</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- jQuery -->
+	<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	
+</body>
+</html>

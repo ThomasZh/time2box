@@ -41,9 +41,17 @@
 						{% for item in vote['items'] %}
 						<p>
 							{% if item['idx'] == 0 %}
-							<input name="idx" type="radio" value="{{item['idx']}}"  checked /> {{item['item']}}
+								<input name="idx" type="radio" value="{{item['idx']}}"  checked />
+								{% if item['imgUrl'] %}
+									<img src="{{item['imgUrl']}}" width="60" height="60" class="img-circle"> 
+								{% end %}
+								{{item['text']}}
 							{% else %}
-							<input name="idx" type="radio" value="{{item['idx']}}" /> {{item['item']}}
+								<input name="idx" type="radio" value="{{item['idx']}}" />
+								{% if item['imgUrl'] %}
+									<img src="{{item['imgUrl']}}" width="60" height="60" class="img-circle"> 
+								{% end %}
+								{{item['text']}}
 							{% end %}
 						</p>
 						{% end %}

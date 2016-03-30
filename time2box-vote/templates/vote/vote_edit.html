@@ -62,18 +62,19 @@
 							<div class="form-group col-xs-12 floating-label-form-group controls">
 								<label>Title</label> 
 								<input type="text" class="form-control"
-									placeholder="Radio" id="name" name="item" required
+									placeholder="Radio" name="texts" required
 									data-validation-required-message="Please enter radio.">
 								<p class="help-block text-danger"></p>
 								<button onclick="DeleteRadioButton(this);" type="button" 
 									class="btn btn-default">Delete Radio</button>
 							</div>
+							<input id="imgUrls" name="imgUrls" type="hidden" />
 						</div>
 					</div>
 					<div id="success-block"></div>
 					<div class="row">
 						<div class="form-group col-xs-12">
-							<button id="SubmitButton" type="button" class="btn btn-default">Submit</button>
+							<button id="SubmitButton" type="button" class="btn btn-default">Next &rarr;</button>
 							<button id="AddRadioButton" type="button" class="btn btn-default">Add Radio</button>
 						</div>
 					</div>
@@ -105,7 +106,7 @@
 			$('#radioGroup').append('<div id="radio'+radioNum+'" class="row control-group">'+
 					'<div class="form-group col-xs-12 floating-label-form-group controls">'+
 					'<label>Title</label> <input type="text" class="form-control"'+
-					'placeholder="Radio" id="name" name="item" required'+
+					'placeholder="Radio" name="texts" required'+
 					'data-validation-required-message="Please enter radio.">'+
 					'<p class="help-block text-danger"></p>'+
 					'<button onclick="DeleteRadioButton(this);" type="button" class="btn btn-default">Delete Radio</button>'+

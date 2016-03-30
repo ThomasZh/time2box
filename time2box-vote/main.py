@@ -24,8 +24,10 @@ import tornado.web
 
 from account import LoginHandler, LogoutHandler, RegisterHandler, \
     ForgotPwdHandler, ResetPwdHandler
-from vote import VoteAdminIndexHandler, VoteAdminAddHandler, VoteAdminAjaxHandler, \
-    VoteIndexHandler, VoteResultHandler
+from vote import  VoteAdminAddHandler, \
+     VoteResultHandler, VoteInfoHandler, VoteIndexHandler, \
+    VoteAdminEditHandler, VoteMineHandler, VoteAdminItemsHandler, \
+    VoteAdminItemHandler, VoteAdminPostHandler
 
 
 define("port", default=8892, help="run on the given port", type=int)
@@ -47,11 +49,15 @@ def main():
             (r'/account/register', RegisterHandler),
             (r'/account/forgot-pwd', ForgotPwdHandler),
             (r'/account/reset-pwd', ResetPwdHandler),
-            (r'/vote/index', VoteIndexHandler),
+            (r'/vote/post/index', VoteIndexHandler),
+            (r'/vote/post/mine', VoteMineHandler),
+            (r'/vote/info', VoteInfoHandler),
             (r'/vote/result', VoteResultHandler),
-            (r'/vote/admin/index', VoteAdminIndexHandler),
             (r'/vote/admin/add', VoteAdminAddHandler),
-            (r'/vote/admin/ajax', VoteAdminAjaxHandler),
+            (r'/vote/admin/edit', VoteAdminEditHandler),
+            (r'/vote/admin/items', VoteAdminItemsHandler),
+            (r'/vote/admin/item', VoteAdminItemHandler),
+            (r'/vote/admin/post', VoteAdminPostHandler),
             (".*", PageNotFoundHandler),
             ],
         # __TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__

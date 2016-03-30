@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>投票结果</title>
+
+<!-- Bootstrap Core CSS -->
+<link rel="stylesheet"
+	href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<!-- Custom CSS -->
+<link href="/static/css/clean-blog.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<!-- Main Content -->
+	<div class="container">
+		<form action="" method="get">
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<div class="post-preview">
+						<h2 class="post-title">{{vote['title']}}</h2>
+						<img class="img-responsive" src="{{vote['imgUrl']}}">
+						<h3 class="post-subtitle">{{vote['subTitle']}}</h3>
+						<ul>
+							{% for item in vote['items'] %}
+								<li>
+								{% if item['imgUrl'] %}
+									<img src="{{item['imgUrl']}}" width="60" height="60" class="img-circle"> 
+								{% end %}
+								{{item['text']}} ({{item['num']}}票)</li> 
+							{% end %}
+						</ul>
+					</div>
+					<hr />
+				</div>
+				<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+					<!-- Pager -->
+					<ul class="pager">
+						<li class="next">
+							<a href="/vote/admin/add" class="defbtn">创建新投票，发送到朋友圈，玩一玩 &rarr;</a>
+							<!-- 
+						    <a href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxaa328c83d3132bfb&redirect_uri=http://vote.time2box.com/vote/admin/add?response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect" class="defbtn">创建新投票，发送到朋友圈，玩一玩 &rarr;</a>
+						     -->
+						</li>
+					</ul>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- jQuery -->
+	<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+	<!-- Bootstrap Core JavaScript -->
+	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+	
+</body>
+</html>

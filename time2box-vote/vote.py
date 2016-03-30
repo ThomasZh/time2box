@@ -15,21 +15,41 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import json
 import logging
-import time
 
 from tornado.escape import json_decode, json_encode
 from tornado.httpclient import HTTPClient
 from tornado.httputil import url_concat
 import tornado.web
 
-from account import ssoLogin
-from base import BaseHandler, timestamp_datetime, datetime_timestamp, STP
-from wechat import getAccessToken, APP_ID, APP_SECRET, getUserInfo
+from base import BaseHandler, STP
+
+
+def toJson(title, subTitle, imgUrl, texts, imgUrls):
+    _str2 = '['
+    i = 0;
+    l = len(texts)
+    for _text in texts:
+        _str2 = _str2 + '{"text":"'+_text+'","imgUrl":"'+imgUrls[i]+'","num":0,"idx":'+str(i)+'}'
+        i = i + 1
+        if i < l:
+            _str2 = _str2 + ','
+    _str2 = _str2 + ']'
+    _str = '{"title":"'+title+'","subTitle":"'+subTitle+'","imgUrl":"'+imgUrl+'","items":'+_str2+'}'
+    return _str
 
 
 class VoteIndexHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('vote/posts_index.html')
+
+
+class VoteMineHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('vote/posts_mine.html')
+
+
+class VoteInfoHandler(tornado.web.RequestHandler):
     def get(self):
         _vote_id = (self.request.arguments['id'])[0]
         logging.info("_vote_id: ", _vote_id)
@@ -40,7 +60,7 @@ class VoteIndexHandler(tornado.web.RequestHandler):
         logging.info("got response %r", response.body)
         _vote = json_decode(response.body)
         
-        self.render('vote/index.html', vote=_vote)
+        self.render('vote/vote_info.html', vote=_vote)
 
     def post(self):
         _id = (self.request.arguments['id'])[0]
@@ -71,61 +91,23 @@ class VoteResultHandler(tornado.web.RequestHandler):
         logging.info("got response %r", response.body)
         _vote = json_decode(response.body)
         
-        self.render('vote/result.html', vote=_vote)
+        self.render('vote/vote_result.html', vote=_vote)
 
 
-class VoteAdminIndexHandler(BaseHandler):
+class VoteAdminPostHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
-    def get(self):
-        self.render('vote/admin_index.html')
+    def put(self):
+        _ticket = self.get_secure_cookie("ticket")
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
+        
+        self.redirect("/vote/info?id="+_id)
 
-    
-def toJson(title, subTitle, imgUrl, items):
-    _str2 = '['
-    i = 0;
-    l = len(items)
-    for _item in items:
-        _str2 = _str2 + '{"item":"'+_item+'","num":0,"idx":'+str(i)+'}'
-        i = i + 1
-        if i < l:
-            _str2 = _str2 + ','
-    _str2 = _str2 + ']'
-    _str = '{"title":"'+title+'","subTitle":"'+subTitle+'","imgUrl":"'+imgUrl+'","items":'+_str2+'}'
-    return _str
 
-    
 class VoteAdminAddHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
-        _code = self.get_argument("code", "")
-        logging.debug("got code %r", _code)
-        _unionid = self.get_argument("unionid", "")
-        logging.debug("got unionid %r", _unionid)
-        
-        accessToken = getAccessToken(APP_ID, APP_SECRET, _code);
-        _token = accessToken["access_token"];
-        logging.debug("got token %r", _token)
-        _openid = accessToken["openid"];
-        logging.debug("got openid %r", _openid)
-        _unionid = accessToken["unionid"];
-        logging.debug("got unionid %r", _unionid)
-        
-        userInfo = getUserInfo(_token, _openid)
-        _nickname = userInfo["nickname"]
-        _nickname = unicode(_nickname).encode('utf-8')
-        logging.debug("got nickname %r", _nickname)
-        _headimgurl = userInfo["headimgurl"]
-        logging.debug("got headimgurl %r", _headimgurl)
-        
-        _user_agent = self.request.headers["User-Agent"]
-        _lang = self.request.headers["Accept-Language"]
-        # 1604=wechat
-        stpSession = ssoLogin(1604, _unionid, _nickname, _headimgurl, _user_agent, _lang)
-        _accountId = stpSession["accountId"]
-        _sessionTicket = stpSession["sessionToken"]
-        self.set_secure_cookie("ticket", _sessionTicket)
-        
-        self.render('vote/admin_add.html')
+        self.render('vote/vote_add.html')
         
     @tornado.web.authenticated  # if no session, redirect to login page
     def post(self):
@@ -133,61 +115,81 @@ class VoteAdminAddHandler(BaseHandler):
         _title = (self.request.arguments['title'])[0]
         _sub_title = (self.request.arguments['subTitle'])[0]
         _img_url = (self.request.arguments['imgUrl'])[0]
-        _items = self.request.arguments['item']
         logging.info("_title: ", _title)
         logging.info("_sub_title: ", _sub_title)
         logging.info("_img_url: ", _img_url)
-        logging.info("_items: ", _items)
-        print _title
-        print _sub_title
-        print _img_url
-        print _items
         
         params = {"X-Session-Id": _ticket}
         url = url_concat("http://"+STP+"/votes", params)
         http_client = HTTPClient()
-        _json = toJson(_title, _sub_title, _img_url, _items)
-        print _json
+        vote =  {"title":_title,"subTitle":_sub_title,"imgUrl":_img_url,"items":[]}
+        _json = json_encode(vote)
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
-        _vote_id = json_decode(response.body)
+        _id = json_decode(response.body)
         
-        url = "http://"+STP+"/votes/" + _vote_id
+        self.redirect("/vote/admin/items?id="+_id)
+
+
+class VoteAdminEditHandler(BaseHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        self.render('vote/vote_edit.html')
+
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def put(self):
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
+        
+        self.redirect("/vote/admin/items?id="+_id)
+
+
+class VoteAdminItemsHandler(BaseHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
+        
+        url = "http://"+STP+"/votes/" + _id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _vote = json_decode(response.body)
         
-        self.render('vote/index.html', vote=_vote)
+        self.render('vote/vote_items.html', vote=_vote)
 
 
-class VoteAdminAjaxHandler(BaseHandler):
+class VoteAdminItemHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
+        
+        self.render('vote/vote_item_add.html', id=_id)
+
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def post(self):
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
         _ticket = self.get_secure_cookie("ticket")
-        _last_timestamp = (self.request.arguments['last'])[0] # datetime as 2016-02-12 15:29
-        print _last_timestamp
+        _text = (self.request.arguments['text'])[0]
+        _img_url = (self.request.arguments['imgUrl'])[0]
+        logging.info("_text: ", _text)
+        logging.info("_img_url: ", _img_url)
         
-        if _last_timestamp == None:
-            _timestamp = long(time.time() * 1000)
-            print _timestamp
-        elif _last_timestamp == '':
-            _timestamp = long(time.time() * 1000)
-            print _timestamp
-        else:
-            _timestamp = datetime_timestamp(_last_timestamp) * 1000
-            print _timestamp
-        
-        params = {"X-Session-Id": _ticket, "before": _timestamp, "limit": 20}
-        url = url_concat("http://182.92.66.109/blogs/my-articles", params)
+        params = {"X-Session-Id": _ticket}
+        url = url_concat("http://"+STP+"/votes/"+_id, params)
         http_client = HTTPClient()
-        response = http_client.fetch(url, method="GET")
+        vote_item =  {"text":_text,"imgUrl":_img_url}
+        _json = json_encode(vote_item)
+        response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
-        _articles = json_decode(response.body)
         
-        for _article in _articles:
-            _timestamp = _article["timestamp"]
-            _datetime = timestamp_datetime(_timestamp / 1000)
-            _article["timestamp"] = _datetime
+        self.redirect("/vote/admin/items?id="+_id)
+
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def delete(self):
+        _id = (self.request.arguments['id'])[0]
+        logging.info("_vote_id: ", _id)
         
-        self.finish(json.dumps(_articles))  
+        self.redirect("/vote/admin/items?id="+_id)
