@@ -34,7 +34,7 @@
 							{% for item in vote['items'] %}
 								<li>
 								{% if item['imgUrl'] %}
-									<img src="{{item['imgUrl']}}" width="60" height="60" class="img-circle"> 
+									<img src="{{item['imgUrl']}}!200x200" width="60" height="60" class="img-circle"> 
 								{% end %}
 								{{item['text']}} ({{item['num']}}票)</li> 
 							{% end %}
