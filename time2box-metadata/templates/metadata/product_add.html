@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<title>添加</title>
+
+<!-- Bootstrap Core CSS -->
+<link rel="stylesheet"
+	href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<!-- Custom CSS -->
+<link href="/static/css/clean-blog.min.css" rel="stylesheet">
+<!-- jQuery -->
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<link rel="stylesheet" href="/static/css/fileinput.min.css">
+
+</head>
+
+<body>
+
+	<!-- Main Content -->
+	<div class="container">
+		<form id="form1" action="/vote/admin/add" method="POST">
+			{% raw xsrf_form_html() %}
+
+			<div class="row">
+				<div id="articleRows" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+				
+					<div class="row control-group">
+						<div
+							class="form-group col-xs-12 floating-label-form-group controls">
+							<label>Title</label> 
+							<input type="text" class="form-control"
+								placeholder="{{metadata['name']}}" id="name" name="title" required
+								data-validation-required-message="Please enter title.">
+							<p class="help-block text-danger"></p>
+						</div>
+					</div>
+					<div class="row control-group">
+						<div
+							class="form-group col-xs-12 floating-label-form-group controls">
+							<label>Message</label>
+							<textarea rows="5" class="form-control" placeholder="描述"
+								id="message" name="subTitle" required
+								data-validation-required-message="Please enter sub title."></textarea>
+							<p class="help-block text-danger"></p>
+						</div>
+					</div>
+					<div id="success-block"></div>
+					<div class="row">
+						<div class="form-group col-xs-12">
+							<button id="SubmitButton" type="button" class="btn btn-default">完成 &rarr;</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+
+	<!-- Bootstrap Core JavaScript -->
+	<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+		$('#SubmitButton').click(function() {
+			var file = document.getElementById('file').files[0];
+			var imgUrl = uploadUpyun(file);
+			document.getElementById("imgUrl").value = imgUrl;
+		});
+	</script>
+</body>
+</html>
