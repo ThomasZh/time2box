@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 #
 # Copyright 2015 Time2Box
 # thomas@time2box.com
@@ -18,6 +19,7 @@
 import time
 
 import tornado.web
+
 
 STP = "123.56.228.41"
 

@@ -27,23 +27,24 @@ import tornado.web
 
 from base import BaseHandler, timestamp_datetime, datetime_timestamp
 
+STP = "123.56.105.78"
 
 class MyArticlesHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
         _timestamp = long(time.time() * 1000)
         params = {"before": _timestamp, "limit": 20}
-        url = url_concat("http://182.92.66.109/blogs/articles", params)
+        url = url_concat("http://" + STP + "/blogs/articles", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _articles = json_decode(response.body)
-        
+
         for _article in _articles:
             _timestamp = _article["timestamp"]
             _datetime = timestamp_datetime(_timestamp / 1000)
             _article["timestamp"] = _datetime
-            
+
         self.render('blog/my-articles.html', articles=_articles)
 
 
@@ -53,7 +54,7 @@ class MyArticleHandler(BaseHandler):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
 
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -61,8 +62,8 @@ class MyArticleHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -75,7 +76,7 @@ class AddArticleHandler(BaseHandler):
     @tornado.web.authenticated  # if no session, redirect to login page
     def get(self):
         self.render('blog/add-article.html')
-        
+
     def post(self):
         _ticket = self.get_secure_cookie("ticket")
         _title = (self.request.arguments['title'])[0]
@@ -84,9 +85,9 @@ class AddArticleHandler(BaseHandler):
         logging.info("got title %r", _title)
         logging.info("got title %r", _content)
         logging.info("got title %r", _img_url)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/articles", params)
+        url = url_concat("http://" + STP + "/blogs/articles", params)
         data = {"title": _title, "content": _content, "imgUrl": _img_url}
         _json = json_encode(data)
         http_client = HTTPClient()
@@ -95,17 +96,17 @@ class AddArticleHandler(BaseHandler):
 
         _timestamp = long(time.time() * 1000)
         params = {"before": _timestamp, "limit": 20}
-        url = url_concat("http://182.92.66.109/blogs/articles", params)
+        url = url_concat("http://" + STP + "/blogs/articles", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _articles = json_decode(response.body)
-        
+
         for _article in _articles:
             _timestamp = _article["timestamp"]
             _datetime = timestamp_datetime(_timestamp / 1000)
             _article["timestamp"] = _datetime
-            
+
         self.render('blog/my-articles.html', articles=_articles)
 
 
@@ -114,7 +115,7 @@ class AddParagraphHandler(BaseHandler):
     def get(self):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
-        
+
         self.render('blog/add-paragraph.html', articleId=_article_id)
 
     def post(self):
@@ -125,17 +126,17 @@ class AddParagraphHandler(BaseHandler):
         logging.info("got article_id %r", _article_id)
         logging.info("got type %r", _type)
         logging.info("got content %r", _content)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs", params)
         data = {"articleId": _article_id, "type": _type, "content": _content}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
         _paragraph_id = json_decode(response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -143,8 +144,8 @@ class AddParagraphHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -159,7 +160,7 @@ class AddParagraphAfterHandler(BaseHandler):
         _article_id = (self.request.arguments['id'])[0]
         _brother_id = (self.request.arguments['brotherId'])[0]
         logging.info("article_id: ", _article_id)
-        
+
         self.render('blog/add-paragraph-after.html', articleId=_article_id, brotherId=_brother_id)
 
     def post(self):
@@ -171,17 +172,17 @@ class AddParagraphAfterHandler(BaseHandler):
         logging.info("got article_id %r", _article_id)
         logging.info("got type %r", _type)
         logging.info("got content %r", _content)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_brother_id+"/after", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_brother_id+"/after", params)
         data = {"articleId": _article_id, "type": _type, "content": _content}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
         _paragraph_id = json_decode(response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -189,8 +190,8 @@ class AddParagraphAfterHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -204,7 +205,7 @@ class AddParagraphRawHandler(BaseHandler):
     def get(self):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
-        
+
         self.render('blog/add-paragraph-raw.html', articleId=_article_id)
 
     def post(self):
@@ -213,17 +214,17 @@ class AddParagraphRawHandler(BaseHandler):
         _content = (self.request.arguments['content'])[0]
         logging.info("got article_id %r", _article_id)
         logging.info("got content %r", _content)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs", params)
         data = {"articleId": _article_id, "type": "raw", "content": _content}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
         _paragraph_id = json_decode(response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -231,8 +232,8 @@ class AddParagraphRawHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -247,7 +248,7 @@ class AddParagraphRawAfterHandler(BaseHandler):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
         _brother_id = (self.request.arguments['brotherId'])[0]
-        
+
         self.render('blog/add-paragraph-raw-after.html', articleId=_article_id, brotherId=_brother_id)
 
     def post(self):
@@ -257,17 +258,17 @@ class AddParagraphRawAfterHandler(BaseHandler):
         _brother_id = (self.request.arguments['brotherId'])[0]
         logging.info("got article_id %r", _article_id)
         logging.info("got content %r", _content)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_brother_id+"/after", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_brother_id+"/after", params)
         data = {"articleId": _article_id, "type": "raw", "content": _content}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
         _paragraph_id = json_decode(response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -275,8 +276,8 @@ class AddParagraphRawAfterHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -290,7 +291,7 @@ class AddParagraphImgHandler(BaseHandler):
     def get(self):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
-        
+
         self.render('blog/add-paragraph-img.html', articleId=_article_id)
 
     def post(self):
@@ -299,17 +300,17 @@ class AddParagraphImgHandler(BaseHandler):
         _img_url = (self.request.arguments['imgUrl'])[0]
         logging.info("got article_id %r", _article_id)
         logging.info("got img %r", _img_url)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs", params)
         data = {"articleId": _article_id, "type": "img", "content": _img_url}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
         _paragraph_id = json_decode(response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -317,8 +318,8 @@ class AddParagraphImgHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -333,7 +334,7 @@ class AddParagraphImgAfterHandler(BaseHandler):
         _article_id = (self.request.arguments['id'])[0]
         _brother_id = (self.request.arguments['brotherId'])[0]
         logging.info("article_id: ", _article_id)
-        
+
         self.render('blog/add-paragraph-img-after.html', articleId=_article_id, brotherId=_brother_id)
 
     def post(self):
@@ -343,17 +344,17 @@ class AddParagraphImgAfterHandler(BaseHandler):
         _brother_id = (self.request.arguments['brotherId'])[0]
         logging.info("got article_id %r", _article_id)
         logging.info("got img %r", _img_url)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_brother_id+"/after", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_brother_id+"/after", params)
         data = {"articleId": _article_id, "type": "img", "content": _img_url}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         logging.info("got response %r", response.body)
         _paragraph_id = json_decode(response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -361,8 +362,8 @@ class AddParagraphImgAfterHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -377,13 +378,13 @@ class EditParagraphHandler(BaseHandler):
         _article_id = (self.request.arguments['articleId'])[0]
         _paragraph_id = (self.request.arguments['id'])[0]
         logging.info("paragraph_id: ", _paragraph_id)
-        
-        url = "http://182.92.66.109/blogs/paragraphs/" + _paragraph_id
+
+        url = "http://" + STP + "/blogs/paragraphs/" + _paragraph_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _paragraph = json_decode(response.body)
-        
+
         self.render('blog/edit-paragraph.html', articleId=_article_id, paragraph=_paragraph)
 
     def post(self):
@@ -395,16 +396,16 @@ class EditParagraphHandler(BaseHandler):
         logging.info("got paragraph_id %r", _paragraph_id)
         logging.info("got type %r", _type)
         logging.info("got content %r", _content)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_paragraph_id, params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_paragraph_id, params)
         data = {"articleId": _article_id, "id": _paragraph_id, "type": _type, "content": _content}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="PUT", body=_json)
         logging.info("got response %r", response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -412,8 +413,8 @@ class EditParagraphHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -428,13 +429,13 @@ class EditParagraphRawHandler(BaseHandler):
         _article_id = (self.request.arguments['articleId'])[0]
         _paragraph_id = (self.request.arguments['id'])[0]
         logging.info("paragraph_id: ", _paragraph_id)
-        
-        url = "http://182.92.66.109/blogs/paragraphs/" + _paragraph_id
+
+        url = "http://" + STP + "/blogs/paragraphs/" + _paragraph_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _paragraph = json_decode(response.body)
-        
+
         self.render('blog/edit-paragraph-raw.html', articleId=_article_id, paragraph=_paragraph)
 
     def post(self):
@@ -444,16 +445,16 @@ class EditParagraphRawHandler(BaseHandler):
         _content = (self.request.arguments['content'])[0]
         logging.info("got paragraph_id %r", _paragraph_id)
         logging.info("got content %r", _content)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_paragraph_id, params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_paragraph_id, params)
         data = {"articleId": _article_id, "id": _paragraph_id, "type": "raw", "content": _content}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="PUT", body=_json)
         logging.info("got response %r", response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -461,8 +462,8 @@ class EditParagraphRawHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -477,13 +478,13 @@ class EditParagraphImgHandler(BaseHandler):
         _article_id = (self.request.arguments['articleId'])[0]
         _paragraph_id = (self.request.arguments['id'])[0]
         logging.info("paragraph_id: ", _paragraph_id)
-        
-        url = "http://182.92.66.109/blogs/paragraphs/" + _paragraph_id
+
+        url = "http://" + STP + "/blogs/paragraphs/" + _paragraph_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _paragraph = json_decode(response.body)
-        
+
         self.render('blog/edit-paragraph-img.html', articleId=_article_id, paragraph=_paragraph)
 
     def post(self):
@@ -493,16 +494,16 @@ class EditParagraphImgHandler(BaseHandler):
         _img_url = (self.request.arguments['imgUrl'])[0]
         logging.info("got paragraph_id %r", _paragraph_id)
         logging.info("got img_url %r", _img_url)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_paragraph_id, params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_paragraph_id, params)
         data = {"articleId": _article_id, "id": _paragraph_id, "type": "img", "content": _img_url}
         _json = json_encode(data)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="PUT", body=_json)
         logging.info("got response %r", response.body)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -510,8 +511,8 @@ class EditParagraphImgHandler(BaseHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -527,16 +528,16 @@ class UpParagraphHandler(BaseHandler):
         _article_id = (self.request.arguments['articleId'])[0]
         _paragraph_id = (self.request.arguments['id'])[0]
         logging.info("got paragraph_id %r", _paragraph_id)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_paragraph_id+"/up", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_paragraph_id+"/up", params)
         http_client = HTTPClient()
         data = {"articleId": _article_id}
         _json = json_encode(data)
         response = http_client.fetch(url, method="PUT", body=_json)
         logging.info("got response %r", response.body)
 
-        self.finish("ok")  
+        self.finish("ok")
 
 
 class DownParagraphHandler(BaseHandler):
@@ -546,16 +547,16 @@ class DownParagraphHandler(BaseHandler):
         _article_id = (self.request.arguments['articleId'])[0]
         _paragraph_id = (self.request.arguments['id'])[0]
         logging.info("got paragraph_id %r", _paragraph_id)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_paragraph_id+"/down", params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_paragraph_id+"/down", params)
         http_client = HTTPClient()
         data = {"articleId": _article_id}
         _json = json_encode(data)
         response = http_client.fetch(url, method="PUT", body=_json)
         logging.info("got response %r", response.body)
 
-        self.finish("ok")  
+        self.finish("ok")
 
 
 class DelParagraphHandler(BaseHandler):
@@ -565,14 +566,14 @@ class DelParagraphHandler(BaseHandler):
         _article_id = (self.request.arguments['articleId'])[0]
         _paragraph_id = (self.request.arguments['id'])[0]
         logging.info("got paragraph_id %r", _paragraph_id)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/paragraphs/"+_paragraph_id, params)
+        url = url_concat("http://" + STP + "/blogs/paragraphs/"+_paragraph_id, params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="DELETE")
         logging.info("got response %r", response.body)
 
-        self.finish("ok")  
+        self.finish("ok")
 
 
 class EditArticleHandler(BaseHandler):
@@ -580,13 +581,13 @@ class EditArticleHandler(BaseHandler):
     def get(self):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
-        
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _article = json_decode(response.body)
-        
+
         self.render('blog/edit-article.html', article=_article)
 
     def post(self):
@@ -598,9 +599,9 @@ class EditArticleHandler(BaseHandler):
         logging.info("got title %r", _title)
         logging.info("got title %r", _content)
         logging.info("got title %r", _img_url)
-        
+
         params = {"X-Session-Id": _ticket}
-        url = url_concat("http://182.92.66.109/blogs/articles/"+_id, params)
+        url = url_concat("http://" + STP + "/blogs/articles/"+_id, params)
         data = {"title": _title, "content": _content, "imgUrl": _img_url}
         _json = json_encode(data)
         http_client = HTTPClient()
@@ -609,17 +610,17 @@ class EditArticleHandler(BaseHandler):
 
         _timestamp = long(time.time() * 1000)
         params = {"before": _timestamp, "limit": 20}
-        url = url_concat("http://182.92.66.109/blogs/articles", params)
+        url = url_concat("http://" + STP + "/blogs/articles", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _articles = json_decode(response.body)
-        
+
         for _article in _articles:
             _timestamp = _article["timestamp"]
             _datetime = timestamp_datetime(_timestamp / 1000)
             _article["timestamp"] = _datetime
-            
+
         self.render('blog/my-articles.html', articles=_articles)
 
 
@@ -628,7 +629,7 @@ class ArticleHandler(tornado.web.RequestHandler):
         _article_id = (self.request.arguments['id'])[0]
         logging.info("article_id: ", _article_id)
 
-        url = "http://182.92.66.109/blogs/articles/" + _article_id
+        url = "http://" + STP + "/blogs/articles/" + _article_id
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
@@ -636,13 +637,13 @@ class ArticleHandler(tornado.web.RequestHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
-        
-        url = "http://182.92.66.109/blogs/my-articles/" + _article_id + "/paragraphs"
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _paragraphs = json_decode(response.body)
-        
+
         _random = random.randint(1, 9)
         _bgImgRandom = "/static/images/title-bkg/"+str(_random)+".jpg"
         self.render('blog/article.html', article=_article, paragraphs=_paragraphs, bgImgRandom = _bgImgRandom)
@@ -652,7 +653,7 @@ class AjaxArticlesHandler(tornado.web.RequestHandler):
     def get(self):
         _last_timestamp = (self.request.arguments['last'])[0] # datetime as 2016-02-12 15:29
         print "last_timestamp: "+_last_timestamp
-        
+
         if _last_timestamp == None:
             _timestamp = long(time.time() * 1000)
             print _timestamp
@@ -662,20 +663,20 @@ class AjaxArticlesHandler(tornado.web.RequestHandler):
         else:
             _timestamp = datetime_timestamp(_last_timestamp) * 1000
             print _timestamp
-        
+
         params = {"before": _timestamp, "limit": 20}
-        url = url_concat("http://182.92.66.109/blogs/articles", params)
+        url = url_concat("http://" + STP + "/blogs/articles", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _articles = json_decode(response.body)
-        
+
         for _article in _articles:
             _timestamp = _article["timestamp"]
             _datetime = timestamp_datetime(_timestamp / 1000)
             _article["timestamp"] = _datetime
-        
-        self.finish(json.dumps(_articles))  
+
+        self.finish(json.dumps(_articles))
 
 
 class AjaxMyArticlesHandler(tornado.web.RequestHandler):
@@ -683,7 +684,7 @@ class AjaxMyArticlesHandler(tornado.web.RequestHandler):
         _ticket = self.get_secure_cookie("ticket")
         _last_timestamp = (self.request.arguments['last'])[0] # datetime as 2016-02-12 15:29
         print _last_timestamp
-        
+
         if _last_timestamp == None:
             _timestamp = long(time.time() * 1000)
             print _timestamp
@@ -693,17 +694,17 @@ class AjaxMyArticlesHandler(tornado.web.RequestHandler):
         else:
             _timestamp = datetime_timestamp(_last_timestamp) * 1000
             print _timestamp
-        
+
         params = {"X-Session-Id": _ticket, "before": _timestamp, "limit": 20}
-        url = url_concat("http://182.92.66.109/blogs/my-articles", params)
+        url = url_concat("http://" + STP + "/blogs/my-articles", params)
         http_client = HTTPClient()
         response = http_client.fetch(url, method="GET")
         logging.info("got response %r", response.body)
         _articles = json_decode(response.body)
-        
+
         for _article in _articles:
             _timestamp = _article["timestamp"]
             _datetime = timestamp_datetime(_timestamp / 1000)
             _article["timestamp"] = _datetime
-        
-        self.finish(json.dumps(_articles))  
+
+        self.finish(json.dumps(_articles))

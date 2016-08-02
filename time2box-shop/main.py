@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding:utf-8 -*-
 #
 # Copyright 2015 Time2Box
 # thomas@time2box.com
@@ -15,6 +16,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import logging
 import os.path
 
 import tornado.ioloop
@@ -31,6 +33,47 @@ from shop import ShopIndexHandler, ShopProductHandler, ShopProductDetailsHandler
 
 define("port", default=8896, help="run on the given port", type=int)
 define("debug", default=True, help="run in debug mode")
+
+
+class MyErrorHandler(RequestHandler):
+    def get_error_html(self, status_code=500, **kwargs):
+        error_info = dict()
+        error_info = kwargs
+        error_info['url'] = self.request.protocol + "://" + self.request.host + self.request.uri
+        error_info['code'] = status_code
+        #error_info['debug'] = AFWConfig.afewords_debug
+    
+        logging.error(error_info['exc_info'])
+        logging.error('Url Error %s' % self.request.uri)
+        
+        if 'title' not in error_info:
+            title = '迷路了 - 子曰'
+    
+        if "des" not in error_info:
+            if status_code >=500:
+                error_info['des'] = '抱歉，服务器出错！请您将这里的信息复制并作为反馈提交给我们，我们将尽快修复这个问题！'
+            else:
+                error_info['des'] = "开发人员未给出具体描述！"
+    
+        if "next_url" not in error_info:
+            error_info['next_url'] = '/'
+    
+        if "exc_info" not in error_info:
+            if "my_exc_info" not in error_info:
+                if status_code >=500:
+                    error_info['exc_info'] = '抱歉，服务器出错！'
+                else:
+                    error_info['exc_info'] = '错误栈未传入错误输出程序！'
+            else:
+                error_info['exc_info'] = error_info['my_exc_info']
+        if "reason" not in error_info:
+            error_info['reason'] = [error_info['des']]
+
+        if status_code >= 500:
+            logging.error(error_info['exc_info'])
+            logging.error('Url Error %s' % self.request.uri)
+    
+        return self.render_string("error.html", error=error_info)
 
 
 class PageNotFoundHandler(RequestHandler):
@@ -57,7 +100,7 @@ def main():
             (r'/shop/contact-us', ShopContactUsHandler),
             (r'/shop/blog', ShopBlogHandler),
             (r'/shop/blog-single', ShopBlogSingleHandler),
-            (".*", PageNotFoundHandler),
+            (".*", MyErrorHandler),
             ],
         # __TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__
         cookie_secret="bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",

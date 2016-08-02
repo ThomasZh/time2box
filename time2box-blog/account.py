@@ -24,6 +24,8 @@ from tornado.httpclient import HTTPClient
 
 from base import BaseHandler
 
+STP = "123.56.105.78"
+
 
 class LoginHandler(BaseHandler):
     def get(self):
@@ -48,7 +50,7 @@ class LoginHandler(BaseHandler):
         print "login_name: "+_login_name
         print "remember_me: " + _remember_me
         print  "user_locale: " + _user_locale
-        
+
         try:
             params = { "osVersion" : "webkit:"+_user_agent,
                   "gateToken" : "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
@@ -56,20 +58,20 @@ class LoginHandler(BaseHandler):
                   "password" : _md5pwd,
                   "email" : _login_name}
             _json = json_encode(params)
-            url = "http://182.92.66.109/account/login"
+            url = "http://" + STP + "/account/login"
             http_client = HTTPClient()
             response = http_client.fetch(url, method="POST", body=_json)
             print response.body
             _stp_session = json_decode(response.body)
             _session_ticket = _stp_session["sessionToken"]
-            
+
             self.set_secure_cookie("ticket", _session_ticket)
             self.set_secure_cookie("login_name", _login_name)
             self.set_secure_cookie("remember_me", _remember_me)
             self.redirect("/")
-        except Exception:  
+        except Exception:
             _err_msg = _("Please enter a correct username and password.")
-            self.render('account/login.html', err_msg=_err_msg, 
+            self.render('account/login.html', err_msg=_err_msg,
                         login_name=_login_name, remember_me=_remember_me)
 
 
@@ -79,7 +81,7 @@ class LogoutHandler(BaseHandler):
         if _remember_me == None:
             _remember_me = "off"
         print  _remember_me
-        
+
         if _remember_me == "off":
             self.clear_cookie("ticket")
             self.clear_cookie("login_name")
@@ -104,7 +106,7 @@ class RegisterHandler(BaseHandler):
         print _md5pwd
         print _user_agent
         print _lang
-    
+
         try:
             params = { "osVersion" : "webkit:"+_user_agent,
                   "gateToken" : "bZJc2sWbQLKos6GkHn/VB9oXwQt8S0R0kRvJ5/xJ89E=",
@@ -113,17 +115,17 @@ class RegisterHandler(BaseHandler):
                   "email" : _email,
                   "lang": _lang,}
             _json = json_encode(params)
-            url = "http://182.92.66.109/account/email-register"
+            url = "http://" + STP + "/account/email-register"
             http_client = HTTPClient()
             response = http_client.fetch(url, method="POST", body=_json)
             print response.body
             _stp_session = json_decode(response.body)
             _sessionTicket = _stp_session["sessionToken"]
-            
+
             self.set_secure_cookie("ticket", _sessionTicket)
             self.set_secure_cookie("login_name", _email)
             self.redirect("/")
-        except Exception:  
+        except Exception:
             _err_msg = _("Email already exist, please try another.")
             self.render('account/register.html', err_msg=_err_msg)
 
@@ -139,17 +141,17 @@ class ForgotPwdHandler(BaseHandler):
     def post(self):
         _email = self.get_argument("input-email", "")
         print _email
-        
+
         params = {"email" : _email}
         _json = json_encode(params)
-        url = "http://182.92.66.109/account/apply-for-email-verification"
+        url = "http://" + STP + "/account/apply-for-email-verification"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         print response.body
 
         _err_msg = _("Email has been send to your mail, please check it.")
-        self.render('account/login.html', err_msg=_err_msg, 
-                    login_name=_email, remember_me="on")    
+        self.render('account/login.html', err_msg=_err_msg,
+                    login_name=_email, remember_me="on")
 
 
 class ResetPwdHandler(BaseHandler):
@@ -162,10 +164,10 @@ class ResetPwdHandler(BaseHandler):
         _ekey = self.get_argument("ekey", "")
         _md5pwd = self.get_argument("input-password", "")
         print _ekey
-        
+
         params = {"ekey" : _ekey}
         _json = json_encode(params)
-        url = "http://182.92.66.109/account/verify-email"
+        url = "http://" + STP + "/account/verify-email"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         print response.body
@@ -174,11 +176,11 @@ class ResetPwdHandler(BaseHandler):
 
         params = {"ekey" : _ekey, "email": _email, "newPassword": _md5pwd}
         _json = json_encode(params)
-        url = "http://182.92.66.109/account/reset-password"
+        url = "http://" + STP + "/account/reset-password"
         http_client = HTTPClient()
         response = http_client.fetch(url, method="POST", body=_json)
         print response.body
-        
+
         _err_msg = _("Password has been changed, please sign in.")
-        self.render('account/login.html', err_msg=_err_msg, 
-                    login_name="", remember_me="off")   
+        self.render('account/login.html', err_msg=_err_msg,
+                    login_name="", remember_me="off")
