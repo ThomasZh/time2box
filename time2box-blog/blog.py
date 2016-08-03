@@ -624,6 +624,38 @@ class EditArticleHandler(BaseHandler):
         self.render('blog/my-articles.html', articles=_articles)
 
 
+class PublishArticleHandler(BaseHandler):
+    @tornado.web.authenticated  # if no session, redirect to login page
+    def get(self):
+        _article_id = (self.request.arguments['id'])[0]
+        logging.info("article_id: ", _article_id)
+
+        _ticket = self.get_secure_cookie("ticket")
+        params = {"X-Session-Id": _ticket}
+        _json = json_encode(params)
+        url = url_concat("http://" + STP + "/blogs/articles/" + _article_id + "/publish", params)
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="POST", body=_json)
+        logging.info("got response %r", response.body)
+
+        url = "http://" + STP + "/blogs/articles/" + _article_id
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _article = json_decode(response.body)
+        _timestamp = _article["timestamp"]
+        _datetime = timestamp_datetime(_timestamp / 1000)
+        _article["timestamp"] = _datetime
+
+        url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
+        http_client = HTTPClient()
+        response = http_client.fetch(url, method="GET")
+        logging.info("got response %r", response.body)
+        _paragraphs = json_decode(response.body)
+
+        self.render('blog/my-article.html', article=_article, paragraphs=_paragraphs, scrollToParagraphId="")
+
+
 class ArticleHandler(tornado.web.RequestHandler):
     def get(self):
         _article_id = (self.request.arguments['id'])[0]
@@ -637,6 +669,10 @@ class ArticleHandler(tornado.web.RequestHandler):
         _timestamp = _article["timestamp"]
         _datetime = timestamp_datetime(_timestamp / 1000)
         _article["timestamp"] = _datetime
+        try:
+            _article['accountNickname']
+        except:
+            _article['accountNickname'] = "nobody"
 
         url = "http://" + STP + "/blogs/my-articles/" + _article_id + "/paragraphs"
         http_client = HTTPClient()
@@ -708,3 +744,28 @@ class AjaxMyArticlesHandler(tornado.web.RequestHandler):
             _article["timestamp"] = _datetime
 
         self.finish(json.dumps(_articles))
+
+        
+# class AjaxArticlesPublishHandler(tornado.web.RequestHandler):
+#     def post(self):
+#         _ticket = self.get_secure_cookie("ticket")
+#         _id = (self.request.arguments['articleId'])[0]
+#         _title = (self.request.arguments['title'])[0]
+#         _content = (self.request.arguments['content'])[0]
+#         _img_url = (self.request.arguments['imgUrl'])[0]
+#     self.render('article.html',)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

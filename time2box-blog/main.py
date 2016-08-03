@@ -36,7 +36,7 @@ from blog import AddArticleHandler, ArticleHandler, AjaxArticlesHandler, \
     UpParagraphHandler, DownParagraphHandler, EditParagraphRawHandler, \
     EditParagraphImgHandler, AddParagraphRawHandler, AddParagraphImgHandler, \
     DelParagraphHandler, AddParagraphAfterHandler, AddParagraphRawAfterHandler, \
-    AddParagraphImgAfterHandler
+    AddParagraphImgAfterHandler, PublishArticleHandler
 
 define("port", default=8888, help="run on the given port", type=int)
 define("debug", default=True, help="run in debug mode")
@@ -69,6 +69,9 @@ class AboutHandler(tornado.web.RequestHandler):
     def get(self):
         self.render('about.html')
 
+class CeshiHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('ceshi.html')
 
 class ContactHandler(tornado.web.RequestHandler):
     def get(self):
@@ -82,6 +85,7 @@ def main():
             (r"/", MainHandler),
             (r"/about", AboutHandler),
             (r"/contact", ContactHandler),
+            (r"/ceshi",CeshiHandler),
             (r"/article", ArticleHandler),
             (r"/ajax-articles", AjaxArticlesHandler),
             (r"/ajax-my-articles", AjaxMyArticlesHandler),
@@ -106,6 +110,8 @@ def main():
             (r"/admin/paragraph/up", UpParagraphHandler),
             (r"/admin/paragraph/down", DownParagraphHandler),
             (r"/admin/paragraph/del", DelParagraphHandler),
+            (r"/admin/publish-article", PublishArticleHandler),
+            #(r"/admin/article", AjaxArticlesPublishHandler),
             (".*", PageNotFoundHandler),
             ],
         # __TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__

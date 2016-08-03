@@ -97,6 +97,10 @@
 					<ul class="pager">
 						<li class="next"><a href="/admin/edit-article?id={{article["id"]}}">
 							<span class="glyphicon glyphicon-edit"></span></a></li>
+					{% if article["publish"] == False %}
+						<li class="next"><a href="/admin/publish-article?id={{article["id"]}}">
+							<span class="glyphicon glyphicon-flag"></span></a></li>
+					{% end %}
 					</ul>
 				</div>
 			</div>
