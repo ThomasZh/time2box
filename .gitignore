@@ -5,3 +5,8 @@ RemoteSystemsTempFiles/
 .DS_Store
 .project
 .pydevproject
+
+*.pyc
+time2box-blog/log/ctrl.log
+time2box-blog/nohup.out
+time2box-blog/pidfile
